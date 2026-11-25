@@ -42,8 +42,7 @@ https://liquid-glass.iyinchao.cn/
 | **Glare**                       | **Yaltirash (porlash)**        | Shisha yuzasida yorqin chiziq yoki nuqta paydo bo‘ladi — uni burchak, rang va o‘lcham bo‘yicha sozlash mumkin.                                |
 | **Gaussian Blur Masking**       | **Gauss xiralashtirish**       | Fonni silliq va yumshoq xira qiladi, shisha effekti uchun ishlatiladi.                                                                        |
 | **Anti-aliasing**               | **Qirralarni silliqlash**      | Grafika qirralarining tish-tish ko‘rinmasligi uchun ularni silliqlaydi.                                                                       |
-| **Dark edges (iOS 27)** **NEW** | **To‘q qirralar** | iOS 27 uslubidagi to‘q qirralar. |
-
+| **Dark edges (iOS 27)** **NEW** | **To‘q qirralar**              | iOS 27 uslubidagi to‘q qirralar.                                                                                                              |
 
 **⚙️ Interaktiv boshqaruvlar:**
 
@@ -102,6 +101,7 @@ pnpm build
 ## Tashakkurlar
 
 Quyidagi manbalar va ilhombaxsh g‘oyalar uchun minnatdorchilik bildiramiz:
+
 - [Inigo Quilez](https://iquilezles.org/) tomonidan yaratilgan [SDF funksiyalari](https://iquilezles.org/articles/distfunctions2d/) va [silliq birlashtirish](https://iquilezles.org/articles/smin/) funksiyasi
 
 - [Adrian Newell](https://unsplash.com/@anewevisual?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) tomonidan [Unsplash’da](https://unsplash.com/photos/a-row-of-multicolored-houses-on-a-street-UtfxJZ-uy5Q?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) olingan namuna fotosurati (Binolar)

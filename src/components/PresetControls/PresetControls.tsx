@@ -43,7 +43,9 @@ export const PresetControls = ({ controls, controlsAPI, lang }: PresetControlsPr
       }
       alert(lang['editor.importSuccessMessage']);
     } catch (err) {
-      alert(lang['editor.importFailedMessage'](err instanceof Error ? err.message : 'Unknown error'));
+      alert(
+        lang['editor.importFailedMessage'](err instanceof Error ? err.message : 'Unknown error'),
+      );
     }
 
     if (fileInputRef.current) {

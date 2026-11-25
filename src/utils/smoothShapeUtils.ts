@@ -14,13 +14,13 @@ function transition(angle: number): CornerTransition {
   const sine = Math.sin(angle);
   const d = 2 * Math.sin(angle / 2) ** 2;
   const c = d / Math.tan(angle);
-  const b = 3 * d * d / (2 * sine ** 3);
+  const b = (3 * d * d) / (2 * sine ** 3);
   return [b, c, d, 3 * b + c - sine];
 }
 
 function fitTransition(smoothing: number, available: number): CornerTransition {
   let low = 0;
-  let high = Math.max(0, Math.min(1, smoothing)) * Math.PI / 4;
+  let high = (Math.max(0, Math.min(1, smoothing)) * Math.PI) / 4;
   if (transition(high)[3] <= available) return transition(high);
   for (let i = 0; i < 32; i++) {
     const mid = (low + high) / 2;
@@ -47,9 +47,17 @@ export function smoothQuarter(g: SmoothShapeGeometry): [number, number][] {
   const r = Math.max(0, Math.min(g.radius, g.width / 2, g.height / 2));
   const w = g.width / 2;
   const h = g.height / 2;
-  if (r === 0) return [[w, 0], [w, h], [0, h]];
+  if (r === 0)
+    return [
+      [w, 0],
+      [w, h],
+      [0, h],
+    ];
   const { horizontal: top, vertical: side } = buildSmoothCorners(g);
-  const points: [number, number][] = [[w, 0], [w, Math.max(0, h - r * (1 + side[3]))]];
+  const points: [number, number][] = [
+    [w, 0],
+    [w, Math.max(0, h - r * (1 + side[3]))],
+  ];
   if (side[2] > 0) {
     for (let i = 1; i <= 64; i++) {
       const [x, y] = transitionPoint(i / 64, side);
@@ -59,7 +67,7 @@ export function smoothQuarter(g: SmoothShapeGeometry): [number, number][] {
   const from = side[2] > 0 ? Math.atan2(side[2], side[1]) : 0;
   const to = Math.PI / 2 - (top[2] > 0 ? Math.atan2(top[2], top[1]) : 0);
   for (let i = 0; i <= 64; i++) {
-    const angle = from + (to - from) * i / 64;
+    const angle = from + ((to - from) * i) / 64;
     points.push([w - r + r * Math.cos(angle), h - r + r * Math.sin(angle)]);
   }
   if (top[2] > 0) {

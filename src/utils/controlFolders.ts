@@ -25,7 +25,9 @@ export function readControlFolderState(): FolderState {
   try {
     const current = localStorage.getItem(STORAGE_KEY);
     const previous = localStorage.getItem(PREVIOUS_STORAGE_KEY);
-    const saved = JSON.parse(current ?? previous ?? localStorage.getItem(LEGACY_STORAGE_KEY) ?? '{}');
+    const saved = JSON.parse(
+      current ?? previous ?? localStorage.getItem(LEGACY_STORAGE_KEY) ?? '{}',
+    );
     for (const key of Object.keys(state) as FolderId[]) {
       if (typeof saved?.[key] === 'boolean') state[key] = saved[key];
     }
@@ -113,7 +115,7 @@ export function useControlFolders(lang: Language, initialState: FolderState) {
     connectFolders();
     return () => {
       observer.disconnect();
-      bindings.forEach(dispose => dispose());
+      bindings.forEach((dispose) => dispose());
     };
   }, [lang]);
 }

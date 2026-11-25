@@ -99,11 +99,16 @@ function GreenOrBlue() {
           {value?.file ? (
             <img src={value?.file} className="leva-image-upload__preview-img"></img>
           ) : null}
-          {value?.file && clearable && <DeleteIcon className="leva-image-upload__clearbt" onClick={(e) => {
-            e.stopPropagation();
-            onUpdate({ file: undefined });
-            onChange({ file: undefined });
-          }}></DeleteIcon>}
+          {value?.file && clearable && (
+            <DeleteIcon
+              className="leva-image-upload__clearbt"
+              onClick={(e) => {
+                e.stopPropagation();
+                onUpdate({ file: undefined });
+                onChange({ file: undefined });
+              }}
+            ></DeleteIcon>
+          )}
         </div>
       </div>
     </Row>
@@ -134,7 +139,7 @@ const sanitize = (v?: any): ImageUploadValueType => {
   //   // @ts-ignore
   //   const [, isLight, color] = v.match(/(light)?(.*)/)
   if (typeof v === 'string') {
-    return { file: v }
+    return { file: v };
   }
 
   if ('file' in v) {
@@ -142,8 +147,8 @@ const sanitize = (v?: any): ImageUploadValueType => {
   }
 
   return {
-    file: undefined
-  }
+    file: undefined,
+  };
 };
 
 const format = (v: ImageUploadValueType) => {

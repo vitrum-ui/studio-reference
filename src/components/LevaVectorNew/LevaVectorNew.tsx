@@ -53,7 +53,7 @@ function Joystick({
     updateCanvas: () => void;
   }>({
     dpr: window.devicePixelRatio,
-    updateCanvas: () => { },
+    updateCanvas: () => {},
     value,
     size,
     showVectorLine,
@@ -122,7 +122,6 @@ function Joystick({
             sizeHiDPI / 2,
         };
 
-
         ctx.save();
         ctx.beginPath();
         ctx.fillStyle = accentColor;
@@ -151,13 +150,12 @@ function Joystick({
         ctx.fill();
         ctx.restore();
 
-
         ctx.restore();
       };
       stateRef.current.updateCanvas();
 
       return () => {
-        stateRef.current.updateCanvas = () => { };
+        stateRef.current.updateCanvas = () => {};
       };
     }
   }, [showPop]);
@@ -343,7 +341,7 @@ const sanitize = (
 
   if (settings.confine === 'circle') {
     const length = Math.sqrt(
-      Math.pow(normalized[0] / settings.xMax!, 2) + Math.pow(normalized[1] / settings.yMax!, 2)
+      Math.pow(normalized[0] / settings.xMax!, 2) + Math.pow(normalized[1] / settings.yMax!, 2),
     );
     if (length > 1) {
       const scale = 1 / length;
@@ -353,7 +351,7 @@ const sanitize = (
         v *= scale;
         v = Math.round(v * Math.pow(10, precision)) / Math.pow(10, precision);
         return v;
-      })
+      });
     }
   }
 

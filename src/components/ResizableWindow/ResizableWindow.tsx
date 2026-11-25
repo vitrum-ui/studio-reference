@@ -209,7 +209,7 @@ export const ResizableWindow = ({
             stateRef.current.onMove?.(offset, {
               preventDefault() {
                 defaultPrevented = true;
-              }
+              },
             });
             if (!defaultPrevented) {
               el.style.transform = `translate(${offset.x}px, ${offset.y}px)`;

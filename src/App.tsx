@@ -23,7 +23,11 @@ import {
 } from './utils/GPUUtils';
 import { detectWebGPU, type WebGPUDetectResult } from './utils/gpuDetect';
 import { buildSmoothCorners } from './utils/smoothShapeUtils';
-import { buildRectangleContour, type RectangleGeometry, MAX_CONTOUR_POINTS } from './utils/contourUtils';
+import {
+  buildRectangleContour,
+  type RectangleGeometry,
+  MAX_CONTOUR_POINTS,
+} from './utils/contourUtils';
 import { ResizableWindow } from './components/ResizableWindow';
 import type { ResizeWindowCtrlRefType } from './components/ResizableWindow/ResizableWindow';
 
@@ -61,7 +65,6 @@ import PlayCircleOutlinedIcon from '@mui/icons-material/PlayCircleOutlined';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import { useLevaControls } from './Controls';
 import { PresetControls } from './components/PresetControls/PresetControls';
-
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -396,20 +399,50 @@ function App() {
     if (!gl) return null;
     return new MultiPassRenderer(canvasEl, [
       { name: 'bgPass', shader: { vertex: VertexShader, fragment: FragmentBgShader } },
-      { name: 'vBlurPass', shader: { vertex: VertexShader, fragment: FragmentBgVblurShader }, inputs: { u_prevPassTexture: 'bgPass' } },
-      { name: 'hBlurPass', shader: { vertex: VertexShader, fragment: FragmentBgHblurShader }, inputs: { u_prevPassTexture: 'vBlurPass' } },
-      { name: 'mainPass', shader: { vertex: VertexShader, fragment: FragmentMainShader }, inputs: { u_blurredBg: 'hBlurPass', u_bg: 'bgPass' }, outputToScreen: true },
+      {
+        name: 'vBlurPass',
+        shader: { vertex: VertexShader, fragment: FragmentBgVblurShader },
+        inputs: { u_prevPassTexture: 'bgPass' },
+      },
+      {
+        name: 'hBlurPass',
+        shader: { vertex: VertexShader, fragment: FragmentBgHblurShader },
+        inputs: { u_prevPassTexture: 'vBlurPass' },
+      },
+      {
+        name: 'mainPass',
+        shader: { vertex: VertexShader, fragment: FragmentMainShader },
+        inputs: { u_blurredBg: 'hBlurPass', u_bg: 'bgPass' },
+        outputToScreen: true,
+      },
     ]);
   }, []);
 
   // Helper: create WebGPU renderer
   const createWebGPURenderer = useCallback((canvasEl: HTMLCanvasElement, device: GPUDevice) => {
-    return new GPUMultiPassRenderer(canvasEl, [
-      { name: 'bgPass', shader: { vertex: WgslVertex, fragment: WgslFragBg } },
-      { name: 'vBlurPass', shader: { vertex: WgslVertex, fragment: WgslFragVblur }, inputs: { u_prevPassTexture: 'bgPass' } },
-      { name: 'hBlurPass', shader: { vertex: WgslVertex, fragment: WgslFragHblur }, inputs: { u_prevPassTexture: 'vBlurPass' } },
-      { name: 'mainPass', shader: { vertex: WgslVertex, fragment: WgslFragMain }, inputs: { u_blurredBg: 'hBlurPass', u_bg: 'bgPass' }, outputToScreen: true },
-    ], device);
+    return new GPUMultiPassRenderer(
+      canvasEl,
+      [
+        { name: 'bgPass', shader: { vertex: WgslVertex, fragment: WgslFragBg } },
+        {
+          name: 'vBlurPass',
+          shader: { vertex: WgslVertex, fragment: WgslFragVblur },
+          inputs: { u_prevPassTexture: 'bgPass' },
+        },
+        {
+          name: 'hBlurPass',
+          shader: { vertex: WgslVertex, fragment: WgslFragHblur },
+          inputs: { u_prevPassTexture: 'vBlurPass' },
+        },
+        {
+          name: 'mainPass',
+          shader: { vertex: WgslVertex, fragment: WgslFragMain },
+          inputs: { u_blurredBg: 'hBlurPass', u_bg: 'bgPass' },
+          outputToScreen: true,
+        },
+      ],
+      device,
+    );
   }, []);
 
   // Effect: handle backend switch (and initial creation)
@@ -526,11 +559,19 @@ function App() {
         if (backend === 'webgl') {
           const gl = canvasEl.getContext('webgl2');
           if (gl) {
-            gl.viewport(0, 0, Math.round(canvasInfo.width * canvasInfo.dpr), Math.round(canvasInfo.height * canvasInfo.dpr));
+            gl.viewport(
+              0,
+              0,
+              Math.round(canvasInfo.width * canvasInfo.dpr),
+              Math.round(canvasInfo.height * canvasInfo.dpr),
+            );
           }
         }
         renderer.resize(canvasInfo.width * canvasInfo.dpr, canvasInfo.height * canvasInfo.dpr);
-        renderer.setUniform('u_resolution', [canvasInfo.width * canvasInfo.dpr, canvasInfo.height * canvasInfo.dpr]);
+        renderer.setUniform('u_resolution', [
+          canvasInfo.width * canvasInfo.dpr,
+          canvasInfo.height * canvasInfo.dpr,
+        ]);
       }
 
       // Texture management
@@ -553,7 +594,9 @@ function App() {
           }
         } else {
           if (stateRef.current.bgTextureType === 'image') {
-            const rafId = requestAnimationFrame(() => { stateRef.current.bgTextureReady = false; });
+            const rafId = requestAnimationFrame(() => {
+              stateRef.current.bgTextureReady = false;
+            });
             if (backend === 'webgl') {
               const gl = canvasEl.getContext('webgl2');
               if (gl) {
@@ -567,14 +610,16 @@ function App() {
                 });
               }
             } else if (stateRef.current.gpuDevice) {
-              gpuLoadTextureFromURL(stateRef.current.gpuDevice, textureUrl).then(({ texture, ratio }) => {
-                if (stateRef.current.bgTextureUrl === textureUrl) {
-                  cancelAnimationFrame(rafId);
-                  stateRef.current.bgTexture = texture;
-                  stateRef.current.bgTextureRatio = ratio;
-                  stateRef.current.bgTextureReady = true;
-                }
-              });
+              gpuLoadTextureFromURL(stateRef.current.gpuDevice, textureUrl).then(
+                ({ texture, ratio }) => {
+                  if (stateRef.current.bgTextureUrl === textureUrl) {
+                    cancelAnimationFrame(rafId);
+                    stateRef.current.bgTexture = texture;
+                    stateRef.current.bgTextureRatio = ratio;
+                    stateRef.current.bgTextureReady = true;
+                  }
+                },
+              );
             }
           } else if (stateRef.current.bgTextureType === 'video') {
             stateRef.current.bgTextureReady = false;
@@ -602,14 +647,22 @@ function App() {
           if (backend === 'webgl') {
             const gl = canvasEl.getContext('webgl2');
             if (gl) {
-              const info = updateVideoTexture(gl, stateRef.current.bgTexture as WebGLTexture, videoEl);
+              const info = updateVideoTexture(
+                gl,
+                stateRef.current.bgTexture as WebGLTexture,
+                videoEl,
+              );
               if (info) {
                 stateRef.current.bgTextureRatio = info.ratio;
                 stateRef.current.bgTextureReady = true;
               }
             }
           } else if (stateRef.current.gpuDevice) {
-            gpuUpdateVideoTexture(stateRef.current.gpuDevice, stateRef.current.bgTexture as GPUTexture, videoEl).then((info) => {
+            gpuUpdateVideoTexture(
+              stateRef.current.gpuDevice,
+              stateRef.current.bgTexture as GPUTexture,
+              videoEl,
+            ).then((info) => {
               if (info) {
                 stateRef.current.bgTexture = info.texture;
                 stateRef.current.bgTextureRatio = info.ratio;
@@ -637,19 +690,19 @@ function App() {
           (Math.abs(stateRef.current.mouseSpringSpeed.x) *
             controls.shapeWidth *
             controls.springSizeFactor) /
-          100,
+            100,
         y:
           controls.shapeHeight +
           (Math.abs(stateRef.current.mouseSpringSpeed.y) *
             controls.shapeHeight *
             controls.springSizeFactor) /
-          100,
+            100,
       };
 
       const contourGeometry: RectangleGeometry = {
         width: shapeSizeSpring.x,
         height: shapeSizeSpring.y,
-        radius: Math.min(shapeSizeSpring.x, shapeSizeSpring.y) / 2 * controls.shapeRadius / 100,
+        radius: ((Math.min(shapeSizeSpring.x, shapeSizeSpring.y) / 2) * controls.shapeRadius) / 100,
         smoothing: controls.shapeSmoothing / 100,
       };
       // Translation, lighting and fusion share the same stable local perimeter.
@@ -760,11 +813,7 @@ function App() {
           </a>
         </div>
       </header>
-      <PresetControls
-        controls={controls}
-        controlsAPI={controlsAPI}
-        lang={lang}
-      />
+      <PresetControls controls={controls} controlsAPI={controlsAPI} lang={lang} />
       <ResizableWindow
         disableMove
         size={canvasInfo}

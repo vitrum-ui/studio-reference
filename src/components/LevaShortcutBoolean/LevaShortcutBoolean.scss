@@ -10,7 +10,12 @@
     width: 22px;
     height: 21px;
     color: var(--leva-colors-highlight3);
-    font: 500 12px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font:
+      500 12px/1 ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Consolas,
+      monospace;
     user-select: none;
     transition: transform 80ms ease;
 
@@ -34,8 +39,10 @@
       inset: auto 2px 2px;
       height: 3px;
       background:
-        linear-gradient(125deg, transparent 42%, #737984 46% 56%, transparent 60%) left bottom / 3px 3px no-repeat,
-        linear-gradient(55deg, transparent 42%, #737984 46% 56%, transparent 60%) right bottom / 3px 3px no-repeat;
+        linear-gradient(125deg, transparent 42%, #737984 46% 56%, transparent 60%) left bottom / 3px
+          3px no-repeat,
+        linear-gradient(55deg, transparent 42%, #737984 46% 56%, transparent 60%) right bottom / 3px
+          3px no-repeat;
     }
 
     span {

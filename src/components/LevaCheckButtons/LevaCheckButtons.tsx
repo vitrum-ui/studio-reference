@@ -7,10 +7,10 @@ import { LevaButton } from '../LevaButton';
 const { Row, Label } = Components;
 
 type CheckButtonsSettings = {
-  options: { value: string; label?: string; disabled?: boolean; title?: string; }[];
+  options: { value: string; label?: string; disabled?: boolean; title?: string }[];
   singleMode?: boolean;
   onClick?: (v: string[]) => void;
-}
+};
 
 type CheckButtonsValueType = string[];
 type CheckButtonsProps = CheckButtonsSettings & { selected: CheckButtonsValueType };

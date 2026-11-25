@@ -37,9 +37,15 @@ class GPUFrameBuffer {
     return { color, depth };
   }
 
-  get colorTexture(): GPUTexture { return this._colorTexture; }
-  get colorView(): GPUTextureView { return this._colorView; }
-  get depthView(): GPUTextureView { return this._depthView; }
+  get colorTexture(): GPUTexture {
+    return this._colorTexture;
+  }
+  get colorView(): GPUTextureView {
+    return this._colorView;
+  }
+  get depthView(): GPUTextureView {
+    return this._depthView;
+  }
 
   resize(width: number, height: number): void {
     if (this.width === width && this.height === height) return;
@@ -111,7 +117,7 @@ class GPURenderPassObj {
       code: config.shader.vertex + '\n' + config.shader.fragment,
     });
 
-    const outputFormat = config.outputToScreen ? canvasFormat : 'rgba16float' as GPUTextureFormat;
+    const outputFormat = config.outputToScreen ? canvasFormat : ('rgba16float' as GPUTextureFormat);
 
     this.pipeline = device.createRenderPipeline({
       layout: device.createPipelineLayout({
@@ -120,10 +126,12 @@ class GPURenderPassObj {
       vertex: {
         module: shaderModule,
         entryPoint: 'vs_main',
-        buffers: [{
-          arrayStride: 2 * 4, // 2 floats * 4 bytes
-          attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x2' }],
-        }],
+        buffers: [
+          {
+            arrayStride: 2 * 4, // 2 floats * 4 bytes
+            attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x2' }],
+          },
+        ],
       },
       fragment: {
         module: shaderModule,
@@ -133,9 +141,7 @@ class GPURenderPassObj {
       primitive: { topology: 'triangle-strip' },
     });
 
-    this.frameBuffer = config.outputToScreen
-      ? null
-      : new GPUFrameBuffer(device, width, height);
+    this.frameBuffer = config.outputToScreen ? null : new GPUFrameBuffer(device, width, height);
   }
 
   private createBindGroupLayout(): GPUBindGroupLayout {
@@ -145,7 +151,11 @@ class GPURenderPassObj {
           { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
           { binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
           { binding: 2, visibility: GPUShaderStage.FRAGMENT, sampler: {} },
-          { binding: 3, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } },
+          {
+            binding: 3,
+            visibility: GPUShaderStage.FRAGMENT,
+            buffer: { type: 'read-only-storage' },
+          },
         ],
       });
     } else if (this.passType === 'main') {
@@ -177,12 +187,14 @@ class GPURenderPassObj {
     const view = this.frameBuffer ? this.frameBuffer.colorView : targetView!;
 
     const passDesc: GPURenderPassDescriptor = {
-      colorAttachments: [{
-        view,
-        clearValue: { r: 0, g: 0, b: 0, a: 0 },
-        loadOp: 'clear',
-        storeOp: 'store',
-      }],
+      colorAttachments: [
+        {
+          view,
+          clearValue: { r: 0, g: 0, b: 0, a: 0 },
+          loadOp: 'clear',
+          storeOp: 'store',
+        },
+      ],
     };
 
     const pass = encoder.beginRenderPass(passDesc);
@@ -233,11 +245,7 @@ export class GPUMultiPassRenderer implements IMultiPassRenderer {
   // Placeholder 1x1 white texture for when no bg texture is available
   private placeholderTexture: GPUTexture;
 
-  constructor(
-    canvas: HTMLCanvasElement,
-    configs: RenderPassConfig[],
-    device: GPUDevice,
-  ) {
+  constructor(canvas: HTMLCanvasElement, configs: RenderPassConfig[], device: GPUDevice) {
     this.device = device;
     const context = canvas.getContext('webgpu');
     if (!context) throw new Error('WebGPU context not available');
@@ -272,7 +280,13 @@ export class GPUMultiPassRenderer implements IMultiPassRenderer {
     );
 
     for (const cfg of configs) {
-      const pass = new GPURenderPassObj(device, cfg, this.canvasFormat, canvas.width, canvas.height);
+      const pass = new GPURenderPassObj(
+        device,
+        cfg,
+        this.canvasFormat,
+        canvas.width,
+        canvas.height,
+      );
       this.passes.set(cfg.name, pass);
       this.passesArray.push(pass);
     }
@@ -333,11 +347,7 @@ export class GPUMultiPassRenderer implements IMultiPassRenderer {
       // Build bind group for this pass
       const bindGroup = this.buildBindGroup(pass, uniforms, inputTextures);
 
-      pass.render(
-        encoder,
-        config.outputToScreen ? targetView : null,
-        bindGroup,
-      );
+      pass.render(encoder, config.outputToScreen ? targetView : null, bindGroup);
     }
 
     this.device.queue.submit([encoder.finish()]);
@@ -496,17 +506,20 @@ export class GPUMultiPassRenderer implements IMultiPassRenderer {
 
     // u_resolution (offset 0)
     const res = uniforms.u_resolution ?? [0, 0];
-    f32[0] = res[0]; f32[1] = res[1];
+    f32[0] = res[0];
+    f32[1] = res[1];
     // u_dpr (offset 8)
     f32[2] = uniforms.u_dpr ?? 1;
     // _pad0 (offset 12)
     f32[3] = 0;
     // u_mouse (offset 16)
     const mouse = uniforms.u_mouse ?? [0, 0];
-    f32[4] = mouse[0]; f32[5] = mouse[1];
+    f32[4] = mouse[0];
+    f32[5] = mouse[1];
     // u_mouseSpring (offset 24)
     const ms = uniforms.u_mouseSpring ?? [0, 0];
-    f32[6] = ms[0]; f32[7] = ms[1];
+    f32[6] = ms[0];
+    f32[7] = ms[1];
     // u_shapeWidth (offset 32)
     f32[8] = uniforms.u_shapeWidth ?? 200;
     // u_shapeHeight (offset 36)
@@ -525,7 +538,8 @@ export class GPUMultiPassRenderer implements IMultiPassRenderer {
     f32[15] = uniforms.u_shadowFactor ?? 0.15;
     // u_shadowPosition (offset 64)
     const sp = uniforms.u_shadowPosition ?? [0, 0];
-    f32[16] = sp[0]; f32[17] = sp[1];
+    f32[16] = sp[0];
+    f32[17] = sp[1];
     // u_bgTextureRatio (offset 72)
     f32[18] = uniforms.u_bgTextureRatio ?? 1;
     // u_bgType (offset 76)
@@ -540,7 +554,10 @@ export class GPUMultiPassRenderer implements IMultiPassRenderer {
     i32[23] = uniforms.u_blurEdge ?? 1;
     // u_tint (offset 96, vec4f aligned to 16 bytes)
     const tint = uniforms.u_tint ?? [1, 1, 1, 0];
-    f32[24] = tint[0]; f32[25] = tint[1]; f32[26] = tint[2]; f32[27] = tint[3];
+    f32[24] = tint[0];
+    f32[25] = tint[1];
+    f32[26] = tint[2];
+    f32[27] = tint[3];
     // u_refThickness (offset 112)
     f32[28] = uniforms.u_refThickness ?? 20;
     // u_refFactor (offset 116)
@@ -622,14 +639,13 @@ export async function gpuLoadTextureFromURL(
   const texture = device.createTexture({
     size: [w, h],
     format: 'rgba8unorm',
-    usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+    usage:
+      GPUTextureUsage.TEXTURE_BINDING |
+      GPUTextureUsage.COPY_DST |
+      GPUTextureUsage.RENDER_ATTACHMENT,
   });
 
-  device.queue.copyExternalImageToTexture(
-    { source: bitmap, flipY: false },
-    { texture },
-    [w, h],
-  );
+  device.queue.copyExternalImageToTexture({ source: bitmap, flipY: false }, { texture }, [w, h]);
 
   bitmap.close();
 
@@ -640,7 +656,10 @@ export function gpuCreateEmptyTexture(device: GPUDevice, width = 1, height = 1):
   return device.createTexture({
     size: [width, height],
     format: 'rgba8unorm',
-    usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+    usage:
+      GPUTextureUsage.TEXTURE_BINDING |
+      GPUTextureUsage.COPY_DST |
+      GPUTextureUsage.RENDER_ATTACHMENT,
   });
 }
 
@@ -661,17 +680,19 @@ export async function gpuUpdateVideoTexture(
     texture = device.createTexture({
       size: [video.videoWidth, video.videoHeight],
       format: 'rgba8unorm',
-      usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+      usage:
+        GPUTextureUsage.TEXTURE_BINDING |
+        GPUTextureUsage.COPY_DST |
+        GPUTextureUsage.RENDER_ATTACHMENT,
     });
   }
 
   // Use createImageBitmap to ensure consistent sRGB color handling (same as image path)
   const bitmap = await createImageBitmap(video);
-  device.queue.copyExternalImageToTexture(
-    { source: bitmap, flipY: false },
-    { texture },
-    [bitmap.width, bitmap.height],
-  );
+  device.queue.copyExternalImageToTexture({ source: bitmap, flipY: false }, { texture }, [
+    bitmap.width,
+    bitmap.height,
+  ]);
   bitmap.close();
 
   // Destroy old texture after the new one is ready and written to

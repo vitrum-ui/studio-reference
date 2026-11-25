@@ -81,7 +81,8 @@ float continuousRoundedRectSDF(vec2 p, vec2 halfSize, float radius) {
   vec2 topOffset = p - vec2(clamp(p.x, 0.0, start.x), halfSize.y);
   vec2 nearest = vec2(dot(topOffset, topOffset), topOffset.y);
   vec2 sideOffset = p - vec2(halfSize.x, clamp(p.y, 0.0, start.y));
-  if (dot(sideOffset, sideOffset) < nearest.x) nearest = vec2(dot(sideOffset, sideOffset), sideOffset.x);
+  if (dot(sideOffset, sideOffset) < nearest.x)
+    nearest = vec2(dot(sideOffset, sideOffset), sideOffset.x);
 
   vec2 radial = p - (halfSize - vec2(1.0));
   vec2 sideNormal = vec2(1.0, 0.0);

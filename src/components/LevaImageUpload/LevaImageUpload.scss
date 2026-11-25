@@ -26,7 +26,8 @@
       inset: 0;
 
       background-color: var(--alpha-pattern-color-b);
-      background-image: repeating-linear-gradient(
+      background-image:
+        repeating-linear-gradient(
           45deg,
           var(--alpha-pattern-color-a) 25%,
           transparent 25%,
@@ -42,7 +43,8 @@
           var(--alpha-pattern-color-a) 75%,
           var(--alpha-pattern-color-a)
         );
-      background-position: 0 0,
+      background-position:
+        0 0,
         calc(var(--alpha-pattern-size) / 2) calc(var(--alpha-pattern-size) / 2);
       background-size: var(--alpha-pattern-size) var(--alpha-pattern-size);
     }

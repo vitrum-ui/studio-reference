@@ -1,4 +1,5 @@
 ## 1. Documentation
+
 - [x] 1.1 Update `openspec/project.md` with project context, tech stack, conventions, and domain knowledge
 - [x] 1.2 Create `glass-rendering` spec covering the multi-pass pipeline and glass effects
 - [x] 1.3 Create `parameter-controls` spec covering the Leva-based editor UI

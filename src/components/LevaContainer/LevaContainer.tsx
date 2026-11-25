@@ -9,7 +9,9 @@ const { Row, Label, String } = Components;
 type ContainerSettings = {
   showLabel?: boolean;
   labelRow?: boolean;
-  content?: React.ReactNode | ((props: { value: any; setValue: (v: any) => void }) => React.ReactNode);
+  content?:
+    | React.ReactNode
+    | ((props: { value: any; setValue: (v: any) => void }) => React.ReactNode);
   className?: string;
   style?: React.CSSProperties;
   contentWrapperClassName?: string;
@@ -57,11 +59,11 @@ function ContainerComponent() {
       >
         {typeof settings.content === 'function'
           ? settings.content?.({
-            value,
-            setValue: (v) => {
-              onUpdate(v);
-            },
-          })
+              value,
+              setValue: (v) => {
+                onUpdate(v);
+              },
+            })
           : settings.content}
       </div>
     </Row>
@@ -69,7 +71,6 @@ function ContainerComponent() {
 }
 
 const normalize = ({ contentValue, ...settings }: ContainerProps) => {
-
   return {
     value: contentValue,
     settings: {

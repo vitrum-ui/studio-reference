@@ -44,8 +44,12 @@ export function importPreset(file: File): Promise<PresetData> {
         }
 
         // Migrate the earlier centered transition to an endpoint plus a fade ratio.
-        const { darkEdgeTransition: transition = 50, ...currentControls } = preset.controls as
-          typeof preset.controls & { darkEdgeTransition?: number; shapeModel?: string; shapeRoundness?: number };
+        const { darkEdgeTransition: transition = 50, ...currentControls } =
+          preset.controls as typeof preset.controls & {
+            darkEdgeTransition?: number;
+            shapeModel?: string;
+            shapeRoundness?: number;
+          };
         // All imported presets now use continuous corners.
         delete currentControls.shapeModel;
         delete currentControls.shapeRoundness;
@@ -53,13 +57,16 @@ export function importPreset(file: File): Promise<PresetData> {
         const savedLanguage: unknown = currentControls.language;
         if (savedLanguage !== undefined) {
           const language = Array.isArray(savedLanguage) ? savedLanguage[0] : savedLanguage;
-          if (typeof language === 'string' && Object.prototype.hasOwnProperty.call(languages, language)) {
+          if (
+            typeof language === 'string' &&
+            Object.prototype.hasOwnProperty.call(languages, language)
+          ) {
             currentControls.language = language;
           } else {
             delete (currentControls as Partial<typeof currentControls>).language;
           }
         }
-        const coverage = currentControls.darkEdgeRange ?? (50 + transition / 2);
+        const coverage = currentControls.darkEdgeRange ?? 50 + transition / 2;
         // Presets exported before dark edges keep their original appearance.
         preset.controls = {
           ...currentControls,
@@ -71,7 +78,9 @@ export function importPreset(file: File): Promise<PresetData> {
           darkEdgeSoftness: preset.controls.darkEdgeSoftness ?? 0,
           darkEdgeRange: coverage,
           darkEdgeLighting: preset.controls.darkEdgeLighting ?? 25,
-          darkEdgeFade: preset.controls.darkEdgeFade ?? Math.min(100, transition / Math.max(coverage, 0.0001) * 100),
+          darkEdgeFade:
+            preset.controls.darkEdgeFade ??
+            Math.min(100, (transition / Math.max(coverage, 0.0001)) * 100),
         };
 
         resolve(preset);
